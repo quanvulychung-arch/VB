@@ -1,0 +1,560 @@
+/*
+ * Stylesheet: Đại Chiến Quán Nét: Toản vs Thầy
+ * Phong cách: Retro Arcade Fighting x Cyberpunk Tiệm Nét
+ */
+
+:root {
+  --bg-main: #070913;
+  --bg-card: #0f172a;
+  --toan-color: #f472b6;
+  --toan-glow: rgba(244, 114, 182, 0.4);
+  --thay-color: #ef4444;
+  --thay-glow: rgba(239, 68, 68, 0.4);
+  --neon-blue: #38bdf8;
+  --neon-red: #ef4444;
+  --font-retro: 'Courier New', 'Consolas', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 15% 20%, rgba(234, 179, 8, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(192, 38, 211, 0.08) 0%, transparent 40%);
+}
+
+.game-container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* HEADER TỰA GAME */
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(180deg, #1e293b, #0f172a);
+  border: 2px solid #334155;
+  border-radius: 10px;
+  padding: 8px 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.game-title {
+  font-size: 20px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #facc15, #f43f5e, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spectator-badge {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid var(--neon-red);
+  color: #fca5a5;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  animation: blinkLive 1.5s infinite;
+}
+
+@keyframes blinkLive {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* TOP HUD: MÁU, NỘ, TỈ SỐ ĐỐI KHÁNG */
+.hud-wrapper {
+  background: #090d16;
+  border: 2px solid #1e293b;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+}
+
+.hud-grid {
+  display: grid;
+  grid-template-columns: 1fr 140px 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+.fighter-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fighter-card.toan {
+  text-align: left;
+}
+
+.fighter-card.thay {
+  text-align: right;
+}
+
+.fighter-name-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.fighter-card.thay .fighter-name-bar {
+  justify-content: flex-end;
+}
+
+.avatar-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: #1e293b;
+  border: 2px solid #64748b;
+}
+
+.toan .avatar-icon {
+  border-color: var(--toan-color);
+  box-shadow: 0 0 10px var(--toan-glow);
+}
+
+.thay .avatar-icon {
+  border-color: var(--thay-color);
+  box-shadow: 0 0 10px var(--thay-glow);
+}
+
+/* THANH MÁU (HP BAR) */
+.hp-track {
+  width: 100%;
+  height: 22px;
+  background: #1e293b;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #475569;
+}
+
+.hp-fill {
+  height: 100%;
+  width: 100%;
+  transition: width 0.3s ease-out, background 0.3s;
+}
+
+.toan .hp-fill {
+  background: linear-gradient(90deg, #eab308, #22c55e);
+}
+
+.thay .hp-fill {
+  background: linear-gradient(90deg, #38bdf8, #a855f7);
+  float: right;
+}
+
+.hp-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 3px #000;
+}
+
+/* THANH NỘ (RAGE BAR) */
+.rage-track {
+  width: 100%;
+  height: 8px;
+  background: #111827;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #374151;
+}
+
+.rage-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.2s ease-out;
+}
+
+.toan .rage-fill {
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+}
+
+.thay .rage-fill {
+  background: linear-gradient(90deg, #d946ef, #8b5cf6);
+}
+
+/* KHỐI GIỮA: TỈ SỐ & ROUND */
+.match-info-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #111827;
+  border: 2px solid #374151;
+  border-radius: 8px;
+  padding: 6px;
+}
+
+.round-tag {
+  font-size: 13px;
+  font-weight: 800;
+  color: #facc15;
+  letter-spacing: 1px;
+}
+
+.score-display {
+  font-size: 24px;
+  font-weight: 900;
+  color: #ffffff;
+  font-family: var(--font-retro);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+/* SÀN ĐẤU & CANVAS */
+.battle-arena-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 800 / 480;
+  max-height: 520px;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #334155;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+}
+
+#battleCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* BONG BÓNG THOẠI CÀ KHỊA (SPEECH BUBBLES) - RÕ NÉT, DỄ ĐỌC */
+.speech-bubble {
+  position: absolute;
+  top: 12%;
+  width: 330px;
+  max-width: 44%;
+  background: #090d16;
+  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #f8fafc;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  transform: translateY(-8px) scale(0.96);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.speech-bubble.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.speech-bubble.toan-bubble {
+  left: 4%;
+  border-color: #f472b6;
+  box-shadow: 0 0 20px rgba(244, 114, 182, 0.35);
+}
+
+.speech-bubble.thay-bubble {
+  right: 4%;
+  border-color: #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.35);
+}
+
+.speech-speaker {
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toan-bubble .speech-speaker { color: #f472b6; }
+.thay-bubble .speech-speaker { color: #f87171; }
+
+/* BANNER K.O NỐC AO */
+.ko-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.7);
+  background: rgba(0, 0, 0, 0.9);
+  border: 4px solid var(--neon-red);
+  padding: 20px 40px;
+  border-radius: 16px;
+  text-align: center;
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 40px rgba(239, 68, 68, 0.6);
+}
+
+.ko-banner.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.ko-title {
+  font-size: 48px;
+  font-weight: 900;
+  color: #ef4444;
+  font-family: var(--font-retro);
+  text-shadow: 0 0 20px #ef4444;
+  letter-spacing: 4px;
+}
+
+.ko-winner {
+  font-size: 16px;
+  font-weight: bold;
+  color: #facc15;
+  margin-top: 6px;
+}
+
+/* THANH BÌNH LUẬN TRẬN ĐẤU */
+.commentary-bar {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13.5px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.commentary-icon {
+  font-size: 16px;
+}
+
+#commentaryText {
+  color: #f1f5f9;
+  font-weight: 500;
+}
+
+/* KHU VỰC KHÁN GIẢ & ĐIỀU KHIỂN */
+.spectator-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 12px;
+}
+
+/* KHUNG ĐIỀU KHIỂN & CƯỢC */
+.panel-card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.panel-heading {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 6px;
+}
+
+.controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.5);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: #1e293b;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+}
+
+.btn-secondary:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.btn-secondary.active {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #60a5fa;
+}
+
+.btn-bet-toan {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid var(--toan-color);
+  color: #fef08a;
+  flex: 1;
+}
+
+.btn-bet-toan:hover {
+  background: var(--toan-color);
+  color: #000;
+}
+
+.btn-bet-thay {
+  background: rgba(192, 38, 211, 0.15);
+  border: 1px solid var(--thay-color);
+  color: #f5d0fe;
+  flex: 1;
+}
+
+.btn-bet-thay:hover {
+  background: var(--thay-color);
+  color: #fff;
+}
+
+.betting-info {
+  font-size: 12px;
+  color: #94a3b8;
+  background: #090d16;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+/* KHUNG CHAT KHÁN GIẢ ẢO (LIVESTREAM CHAT) */
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  height: 220px;
+}
+
+.chat-feed {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 4px;
+}
+
+.chat-feed::-webkit-scrollbar {
+  width: 5px;
+}
+
+.chat-feed::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+.chat-message {
+  font-size: 12px;
+  line-height: 1.4;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px 8px;
+  border-radius: 4px;
+  animation: fadeInMsg 0.2s ease-in;
+}
+
+@keyframes fadeInMsg {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-user {
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.chat-text {
+  color: #e2e8f0;
+}
+
+/* RESPONSIVE CHO MOBILE VÀ MÀN HÌNH NHỎ */
+@media (max-width: 768px) {
+  .hud-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .fighter-card.thay {
+    text-align: left;
+  }
+  .fighter-card.thay .fighter-name-bar {
+    justify-content: flex-start;
+  }
+  .thay .hp-fill {
+    float: none;
+  }
+  .spectator-grid {
+    grid-template-columns: 1fr;
+  }
+  .speech-bubble {
+    max-width: 240px;
+    font-size: 11.5px;
+    top: 5%;
+  }
+  .speech-bubble.toan-bubble { left: 2%; }
+  .speech-bubble.thay-bubble { right: 2%; }
+}

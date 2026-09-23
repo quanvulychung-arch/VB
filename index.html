@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đại Chiến Quán Nét: Toản vs Thầy (Auto Fighting & Banter Theatre)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="game-container">
+    <!-- HEADER BAR -->
+    <header class="header-bar">
+      <div class="game-title">
+        <span>🎮 ĐẠI CHIẾN QUÁN NÉT</span>
+        <span style="font-size: 13px; color: #94a3b8; font-weight: normal;">| Toản vs Thầy</span>
+      </div>
+      <div class="spectator-badge">
+        🔴 ĐANG TRUYỀN HÌNH TRỰC TIẾP
+      </div>
+    </header>
+
+    <!-- TOP HUD: THANH MÁU, THANH NỘ, TỈ SỐ -->
+    <div class="hud-wrapper">
+      <div class="hud-grid">
+        <!-- BÊN TRÁI: TOẢN -->
+        <div class="fighter-card toan">
+          <div class="fighter-name-bar">
+            <div class="avatar-icon">🌸</div>
+            <div>
+              <div style="color: #f472b6; font-size: 15px;">TOẢN (Phím Cơ Màu Hường)</div>
+              <div style="font-size: 10px; color: #94a3b8;">Ghế da • Phòng hút thuốc • Cua cô chủ tiệm vàng • 3cm</div>
+            </div>
+          </div>
+          <!-- Máu -->
+          <div class="hp-track">
+            <div id="toanHpBar" class="hp-fill"></div>
+            <span id="toanHpText" class="hp-label">1000/1000 HP</span>
+          </div>
+          <!-- Nộ (Rage) -->
+          <div class="rage-track" title="Thanh Nộ: Đầy 100% tự tung Chiêu Cuối">
+            <div id="toanRageBar" class="rage-fill"></div>
+          </div>
+        </div>
+
+        <!-- Ở GIỮA: ROUND & TỈ SỐ -->
+        <div class="match-info-center">
+          <div id="roundText" class="round-tag">ROUND 1</div>
+          <div id="scoreText" class="score-display">0 - 0</div>
+        </div>
+
+        <!-- BÊN PHẢI: THẦY -->
+        <div class="fighter-card thay">
+          <div class="fighter-name-bar">
+            <div>
+              <div style="color: #f87171; font-size: 15px;">THẦY (Vua Nét Cỏ Ghế Nhựa)</div>
+              <div style="font-size: 10px; color: #94a3b8;">🪑 Ghế Song Long bất tử • Tháp ghế nhựa 8 tầng • Hút thuốc tự do • Phím Fuhlen D</div>
+            </div>
+            <div class="avatar-icon">🪑</div>
+          </div>
+          <!-- Máu -->
+          <div class="hp-track">
+            <div id="thayHpBar" class="hp-fill"></div>
+            <span id="thayHpText" class="hp-label">1000/1000 HP</span>
+          </div>
+          <!-- Nộ (Rage) -->
+          <div class="rage-track" title="Thanh Nộ: Đầy 100% tự tung Chiêu Cuối">
+            <div id="thayRageBar" class="rage-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SÀN ĐẤU CHÍNH (CANVAS ARENA) -->
+    <div class="battle-arena-wrapper">
+      <canvas id="battleCanvas" width="800" height="480"></canvas>
+
+      <!-- Bong bóng thoại cà khịa của Toản -->
+      <div id="toanSpeechBubble" class="speech-bubble toan-bubble">
+        <div class="speech-speaker">TOẢN GÁY:</div>
+        <div id="toanSpeechText">...</div>
+      </div>
+
+      <!-- Bong bóng thoại cà khịa của Thầy -->
+      <div id="thaySpeechBubble" class="speech-bubble thay-bubble">
+        <div class="speech-speaker">THẦY BẬT LẠI:</div>
+        <div id="thaySpeechText">...</div>
+      </div>
+
+      <!-- K.O Banner Nốc Ao -->
+      <div id="koBanner" class="ko-banner">
+        <div class="ko-title">K. O !</div>
+        <div id="koWinnerText" class="ko-winner">THẮNG ÁP ĐẢO!</div>
+      </div>
+    </div>
+
+    <!-- THANH BÌNH LUẬN TRẬN ĐẤU -->
+    <div class="commentary-bar">
+      <span class="commentary-icon">📢</span>
+      <span id="commentaryText">Chào mừng quý khán giả đến với Đấu Trường Quán Nét Toản vs Thầy!</span>
+    </div>
+
+    <!-- KHU VỰC KHÁN GIẢ TƯƠNG TÁC & LIVESTREAM CHAT -->
+    <div class="spectator-grid">
+      <!-- CỤM ĐIỀU KHIỂN & CƯỢC -->
+      <div class="panel-card">
+        <div class="panel-heading">⚡ TRUNG TÂM KHÁN GIẢ TƯƠNG TÁC</div>
+        
+        <!-- Hàng nút hành động -->
+        <div class="controls-row">
+          <button id="btnProvoke" class="btn-primary" title="Ép cả 2 lao vào tung Chiêu Cuối đấm nhau ngay lập tức">
+            🔥 BƠM ĐỂU ĐẤM NHAU
+          </button>
+          <button id="btnPause" class="btn-secondary">⏸️ Tạm dừng</button>
+          <button id="btnSound" class="btn-secondary">🔊 Âm thanh: Bật</button>
+          <button id="btnBgm" class="btn-secondary">🎶 Nhạc nền: Bật</button>
+        </div>
+
+        <!-- Hàng nút tốc độ -->
+        <div class="controls-row" style="align-items: center;">
+          <span style="font-size: 12px; color: #94a3b8; font-weight: bold;">Tốc độ:</span>
+          <button class="btn-secondary speed-btn active" data-speed="1.0">1x Chuẩn</button>
+          <button class="btn-secondary speed-btn" data-speed="1.5">1.5x Nhanh</button>
+          <button class="btn-secondary speed-btn" data-speed="2.0">2x Siêu Tốc</button>
+        </div>
+
+        <!-- Kèo cá cược điểm nét -->
+        <div class="panel-heading" style="margin-top: 4px;">
+          💰 KÈO CƯỢC ĐIỂM NÉT (Ví: <span id="netCoinDisplay" style="color:#facc15">1,000</span> Điểm)
+        </div>
+        <div class="controls-row">
+          <button id="btnBetToan" class="btn-bet-toan">👉 Đặt Cửa Toản (200đ)</button>
+          <button id="btnBetThay" class="btn-bet-thay">👉 Đặt Cửa Thầy (200đ)</button>
+        </div>
+        <div id="betStatus" class="betting-info">
+          Chưa đặt cược (Click chọn bên trên để ăn gấp đôi điểm nếu đoán đúng người thắng Round)
+        </div>
+      </div>
+
+      <!-- KHUNG CHAT KHÁN GIẢ ẢO -->
+      <div class="panel-card chat-box">
+        <div class="panel-heading">💬 BÌNH LUẬN KHÁN GIẢ TIỆM NÉT</div>
+        <div id="chatFeed" class="chat-feed">
+          <div class="chat-message">
+            <span class="chat-user">Hệ Thống:</span> <span class="chat-text">Trận đối đầu tự động đang diễn ra! Khán giả hãy thưởng thức màn cà khịa đỉnh cao.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT FILES -->
+  <script src="banter-data.js"></script>
+  <script src="audio.js"></script>
+  <script src="characters.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
