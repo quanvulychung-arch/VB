@@ -349,6 +349,67 @@ body {
   margin-top: 6px;
 }
 
+/* BANNER TÌNH HUỐNG HÀI HƯỚC (COMEDY SITUATION) */
+.comedy-banner {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background: rgba(15, 23, 42, 0.95);
+  border: 3px solid #facc15;
+  padding: 16px 28px;
+  border-radius: 16px;
+  text-align: center;
+  z-index: 25;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 35px rgba(250, 204, 21, 0.6);
+  max-width: 80%;
+}
+
+.comedy-banner.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.comedy-tag {
+  font-size: 11px;
+  font-weight: 900;
+  color: #facc15;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+
+.comedy-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 0 10px #facc15;
+  margin-bottom: 6px;
+}
+
+.comedy-desc {
+  font-size: 13.5px;
+  color: #e2e8f0;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.btn-comedy {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #000000;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+.btn-comedy:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.6);
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+}
+
 /* THANH BÌNH LUẬN TRẬN ĐẤU */
 .commentary-bar {
   background: #0f172a;

@@ -45,6 +45,9 @@ class QuanNetBattleGame {
       thayText: document.getElementById('thaySpeechText'),
       commentaryText: document.getElementById('commentaryText'),
       chatFeed: document.getElementById('chatFeed'),
+      comedyBanner: document.getElementById('comedyBanner'),
+      comedyTitle: document.getElementById('comedyTitle'),
+      comedyDesc: document.getElementById('comedyDesc'),
       koBanner: document.getElementById('koBanner'),
       koWinnerText: document.getElementById('koWinnerText'),
       netCoinDisplay: document.getElementById('netCoinDisplay'),
@@ -54,6 +57,9 @@ class QuanNetBattleGame {
     this.lastTime = performance.now();
     this.speechTypeTimer = null;
     this.stepTimeout = null;
+    this.comedyTimeout = null;
+
+    this.addChatMessage = this.addAudienceMessage.bind(this);
 
     this.initEvents();
     this.startChatSimulator();
@@ -83,6 +89,15 @@ class QuanNetBattleGame {
       btnProvoke.addEventListener('click', () => {
         autoStartAudio();
         this.forceProvokeBrawl();
+      });
+    }
+
+    // Nút Gọi Cô Chủ Tiệm Vàng (Tình huống hài hước)
+    const btnComedy = document.getElementById('btnComedy');
+    if (btnComedy) {
+      btnComedy.addEventListener('click', () => {
+        autoStartAudio();
+        this.triggerRandomComedySituation();
       });
     }
 
@@ -232,9 +247,11 @@ class QuanNetBattleGame {
       return;
     }
 
-    // 2. Xác suất 40% tung đòn đánh vật lý xiên xỏ, 60% đấu khẩu cà khịa
+    // 2. Xác suất 22% kích hoạt Tình Huống Hài Hước Tiệm Vàng, 38% đòn đánh vật lý, 40% đấu khẩu
     const roll = Math.random();
-    if (roll < 0.4) {
+    if (roll < 0.22 && BANTER_DATABASE.comedySituations) {
+      this.triggerRandomComedySituation();
+    } else if (roll < 0.60) {
       this.executePhysicalBrawl();
     } else {
       this.executeBanterExchange();
@@ -390,6 +407,53 @@ class QuanNetBattleGame {
     this.thayRage = 100;
     this.updateHUD();
     this.executeUltimate(Math.random() < 0.5 ? 'toan' : 'thay');
+  }
+
+  // Tình Huống Hài Hước Đặc Biệt (Tiệm Vàng, Chó Corgi, Cân Vàng, Sập Điện)
+  triggerRandomComedySituation() {
+    if (this.gameState === 'KO') return;
+    this.gameState = 'COMEDY';
+    this.hideSpeechBubbles();
+
+    const situations = BANTER_DATABASE.comedySituations;
+    if (!situations || situations.length === 0) return;
+    const sit = situations[Math.floor(Math.random() * situations.length)];
+
+    // Hiển thị Pop-up Banner
+    if (this.dom.comedyTitle && this.dom.comedyDesc && this.dom.comedyBanner) {
+      this.dom.comedyTitle.textContent = sit.title;
+      this.dom.comedyDesc.textContent = sit.desc;
+      this.dom.comedyBanner.classList.add('show');
+    }
+
+    // Phát âm thanh và hiệu ứng visual
+    window.soundEngine.playComedySound(sit.sound);
+    this.renderer.triggerComedyVisual(sit.visual);
+
+    // Bình luận viên & Chat khán giả
+    this.addCommentary(`🎭 [TÌNH HUỐNG HÀI HƯỚC] ${sit.title}`);
+    this.addAudienceMessage("Cô_Chủ_Tiệm_Vàng", sit.desc);
+
+    // Xử lý sát thương & Nộ
+    if (sit.dmgToan > 0) {
+      this.applyDamage('toan', sit.dmgToan, true, "SỰ CỐ TIỆM VÀNG!");
+    }
+    if (sit.dmgThay > 0) {
+      this.applyDamage('thay', sit.dmgThay, true, "SỰ CỐ TIỆM VÀNG!");
+    }
+    if (sit.rageToan > 0) this.addRage('toan', sit.rageToan);
+    if (sit.rageThay > 0) this.addRage('thay', sit.rageThay);
+
+    // Sau 3.5s tắt banner và tiếp tục trận đấu tự động
+    clearTimeout(this.comedyTimeout);
+    this.comedyTimeout = setTimeout(() => {
+      if (this.dom.comedyBanner) {
+        this.dom.comedyBanner.classList.remove('show');
+      }
+      this.scheduleNextStep(() => {
+        this.checkMatchStatus();
+      }, 500);
+    }, Math.max(1600, 3200 / this.speed));
   }
 
   // Áp dụng sát thương & hiện số bay

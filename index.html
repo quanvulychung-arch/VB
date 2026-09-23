@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đại Chiến Quán Nét: Toản vs Thầy (Auto Fighting & Banter Theatre)</title>
+  <title>Đại Chiến Chủ Tiệm NET - Vàng (Toản vs Thầy & Cô Chủ Tiệm Vàng)</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,8 +12,8 @@
     <!-- HEADER BAR -->
     <header class="header-bar">
       <div class="game-title">
-        <span>🎮 ĐẠI CHIẾN QUÁN NÉT</span>
-        <span style="font-size: 13px; color: #94a3b8; font-weight: normal;">| Toản vs Thầy</span>
+        <span>👑 ĐẠI CHIẾN CHỦ TIỆM NET - VÀNG</span>
+        <span style="font-size: 13px; color: #facc15; font-weight: normal;">| Toản vs Thầy & Cô Chủ Tiệm Vàng</span>
       </div>
       <div class="spectator-badge">
         🔴 ĐANG TRUYỀN HÌNH TRỰC TIẾP
@@ -28,8 +28,8 @@
           <div class="fighter-name-bar">
             <div class="avatar-icon">🌸</div>
             <div>
-              <div style="color: #f472b6; font-size: 15px;">TOẢN (Phím Cơ Màu Hường)</div>
-              <div style="font-size: 10px; color: #94a3b8;">Ghế da • Phòng hút thuốc • Cua cô chủ tiệm vàng • 3cm</div>
+              <div style="color: #f472b6; font-size: 15px;">TOẢN (Chủ Nét Có Vợ Mê Cua Tiệm Vàng)</div>
+              <div style="font-size: 10px; color: #94a3b8; line-height: 1.3;">🌙 Mở 24/7 • Có vợ sợ vợ • Giấu quỹ đen • Thước 3cm • Cua Tiệm Vàng 💍</div>
             </div>
           </div>
           <!-- Máu -->
@@ -54,7 +54,7 @@
           <div class="fighter-name-bar">
             <div>
               <div style="color: #f87171; font-size: 15px;">THẦY (Vua Nét Cỏ Ghế Nhựa)</div>
-              <div style="font-size: 10px; color: #94a3b8;">🪑 Ghế Song Long bất tử • Tháp ghế nhựa 8 tầng • Hút thuốc tự do • Phím Fuhlen D</div>
+              <div style="font-size: 10px; color: #94a3b8; line-height: 1.3;">⏰ 22H Đóng cửa đuổi khách • 🪑 Ghế Song Long • Mượn cân vàng ⚖️ • Phím Fuhlen D</div>
             </div>
             <div class="avatar-icon">🪑</div>
           </div>
@@ -87,6 +87,13 @@
         <div id="thaySpeechText">...</div>
       </div>
 
+      <!-- Tình Huống Hài Hước Pop-up Banner -->
+      <div id="comedyBanner" class="comedy-banner">
+        <div class="comedy-tag">🎭 TÌNH HUỐNG HÀI HƯỚC BẤT NGỜ!</div>
+        <div id="comedyTitle" class="comedy-title">CÔ CHỦ TIỆM VÀNG PHÁN XỬ!</div>
+        <div id="comedyDesc" class="comedy-desc">...</div>
+      </div>
+
       <!-- K.O Banner Nốc Ao -->
       <div id="koBanner" class="ko-banner">
         <div class="ko-title">K. O !</div>
@@ -97,7 +104,7 @@
     <!-- THANH BÌNH LUẬN TRẬN ĐẤU -->
     <div class="commentary-bar">
       <span class="commentary-icon">📢</span>
-      <span id="commentaryText">Chào mừng quý khán giả đến với Đấu Trường Quán Nét Toản vs Thầy!</span>
+      <span id="commentaryText">Chào mừng quý khán giả đến với Đại Chiến Chủ Tiệm NET - VÀNG: Toản vs Thầy!</span>
     </div>
 
     <!-- KHU VỰC KHÁN GIẢ TƯƠNG TÁC & LIVESTREAM CHAT -->
@@ -111,9 +118,12 @@
           <button id="btnProvoke" class="btn-primary" title="Ép cả 2 lao vào tung Chiêu Cuối đấm nhau ngay lập tức">
             🔥 BƠM ĐỂU ĐẤM NHAU
           </button>
+          <button id="btnComedy" class="btn-comedy" title="Kích hoạt ngẫu nhiên 1 tình huống hài hước từ Cô Chủ Tiệm Vàng">
+            💃 GỌI CÔ CHỦ TIỆM VÀNG
+          </button>
           <button id="btnPause" class="btn-secondary">⏸️ Tạm dừng</button>
-          <button id="btnSound" class="btn-secondary">🔊 Âm thanh: Bật</button>
-          <button id="btnBgm" class="btn-secondary">🎶 Nhạc nền: Bật</button>
+          <button id="btnSound" class="btn-secondary">🔊 Âm thanh</button>
+          <button id="btnBgm" class="btn-secondary">🎶 Nhạc nền</button>
         </div>
 
         <!-- Hàng nút tốc độ -->

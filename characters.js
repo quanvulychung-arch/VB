@@ -45,6 +45,15 @@ class CharacterRenderer {
     this.flashColor = null;
     this.flashAlpha = 0;
 
+    // Quản lý animation Tình Huống Hài Hước Đặc Biệt
+    this.comedyAnim = {
+      active: false,
+      type: '',
+      timer: 0,
+      x: 400,
+      y: 340
+    };
+
     // Resize handler
     this.setupResolution();
   }
@@ -115,6 +124,30 @@ class CharacterRenderer {
         this.floatingTexts.splice(i, 1);
       }
     }
+
+    // Cập nhật hoạt ảnh Tình Huống Hài Hước
+    if (this.comedyAnim.active) {
+      this.comedyAnim.timer -= deltaTime;
+      if (this.comedyAnim.type === 'dog_attack') {
+        // Chó chạy từ tiệm vàng sang Toản (x: 380 -> 210)
+        if (this.comedyAnim.x > 210) {
+          this.comedyAnim.x -= deltaTime * 0.25;
+        }
+      }
+      if (this.comedyAnim.timer <= 0) {
+        this.comedyAnim.active = false;
+      }
+    }
+  }
+
+  // Kích hoạt hoạt ảnh tình huống hài hước
+  triggerComedyVisual(type) {
+    this.comedyAnim.active = true;
+    this.comedyAnim.type = type;
+    this.comedyAnim.timer = 3200;
+    this.comedyAnim.x = 380;
+    this.comedyAnim.y = 350;
+    this.screenShake = 15;
   }
 
   // Thêm tia lửa / mảnh vỡ đòn đánh
@@ -191,23 +224,26 @@ class CharacterRenderer {
       this.ctx.translate(shakeX, shakeY);
     }
 
-    // 1. Background Quán Nét Chiến Trường (Nét Cỏ vs Cyber VIP)
+    // 1. Background Quán Nét Chiến Trường (Nét Cỏ vs Cyber VIP & Tiệm Vàng Đối Diện)
     this.renderBackground();
 
     // 2. Vẽ 2 Đấu Thủ (Toản vs Thầy)
     this.renderToan();
     this.renderThay();
 
-    // 3. Vẽ đạn bay / Projectiles
+    // 3. Hoạt ảnh Tình Huống Hài Hước Đặc Biệt (Chó cắn, Cân vàng, Tạt nước)
+    this.renderComedyAnimation();
+
+    // 4. Vẽ đạn bay / Projectiles
     this.renderProjectiles();
 
-    // 4. Vẽ hiệu ứng hạt / Sparks
+    // 5. Vẽ hiệu ứng hạt / Sparks
     this.renderEffects();
 
-    // 5. Vẽ chữ sát thương nhảy số
+    // 6. Vẽ chữ sát thương nhảy số
     this.renderFloatingTexts();
 
-    // 6. Flash màn hình khi K.O / Ultimate
+    // 7. Flash màn hình khi K.O / Ultimate
     if (this.flashAlpha > 0) {
       this.ctx.fillStyle = this.flashColor || '#ffffff';
       this.ctx.globalAlpha = this.flashAlpha;
@@ -218,7 +254,7 @@ class CharacterRenderer {
     this.ctx.restore();
   }
 
-  // Vẽ sàn đấu tiệm nét (Sạch sẽ, không rối mắt, đúng phong cách Arcade)
+  // Vẽ sàn đấu tiệm nét (Sạch sẽ, không rối mắt, có Tiệm Vàng 9999 ở giữa)
   renderBackground() {
     const ctx = this.ctx;
 
@@ -230,15 +266,106 @@ class CharacterRenderer {
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, this.width, this.height);
 
-    // ================= NỬA TRÁI: NÉT TOẢN (Màu Hường, Ghế Da, Phòng Hút Thuốc) =================
+    // ================= KHU VỰC TRUNG TÂM PHÍA TRÊN: TIỆM VÀNG 9999 (ĐỐI DIỆN) =================
+    ctx.save();
+    // Khung nhà tiệm vàng
+    ctx.fillStyle = '#451a03';
+    ctx.fillRect(320, 5, 160, 80);
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(320, 5, 160, 80);
+
+    // Mái hiên tiệm vàng sọc đỏ vàng
+    for (let m = 0; m < 8; m++) {
+      ctx.fillStyle = m % 2 === 0 ? '#dc2626' : '#facc15';
+      ctx.fillRect(320 + m * 20, 5, 20, 10);
+    }
+
+    // Biển hiệu TIỆM VÀNG 9999
+    ctx.fillStyle = '#b45309';
+    ctx.fillRect(325, 17, 150, 18);
+    ctx.fillStyle = '#fef08a';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText("👑 TIỆM VÀNG 9999 💍", 400, 30);
+    ctx.textAlign = 'left';
+
+    // Cửa sổ kính ngắm sang đường
+    ctx.fillStyle = 'rgba(250, 204, 21, 0.15)';
+    ctx.fillRect(330, 38, 140, 42);
+    ctx.strokeStyle = '#eab308';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(330, 38, 140, 42);
+
+    // Cô Chủ Tiệm Vàng (Tóc vàng, kính râm đen, vòng vàng)
+    const cwX = 370;
+    const cwY = 62;
+    // Tóc
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    ctx.arc(cwX, cwY - 8, 11, 0, Math.PI * 2);
+    ctx.fill();
+    // Mặt
+    ctx.fillStyle = '#fde68a';
+    ctx.beginPath();
+    ctx.arc(cwX, cwY - 6, 8, 0, Math.PI * 2);
+    ctx.fill();
+    // Kính râm đen ngầu
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(cwX - 6, cwY - 8, 12, 4);
+    // Vòng vàng to tướng trên cổ
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cwX, cwY + 1, 5, 0, Math.PI);
+    ctx.stroke();
+    // Áo đỏ quý phái
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(cwX - 8, cwY + 3, 16, 15);
+
+    // Chú chó Corgi / Poodle cưng của Tiệm Vàng bên cạnh
+    const dogX = 425;
+    const dogY = 66;
+    ctx.fillStyle = '#d97706';
+    ctx.beginPath();
+    ctx.arc(dogX, dogY - 4, 6, 0, Math.PI * 2); // Đầu chó
+    ctx.fill();
+    // Tai chó vểnh
+    ctx.beginPath();
+    ctx.moveTo(dogX - 5, dogY - 8);
+    ctx.lineTo(dogX - 2, dogY - 12);
+    ctx.lineTo(dogX, dogY - 8);
+    ctx.moveTo(dogX + 1, dogY - 8);
+    ctx.lineTo(dogX + 4, dogY - 12);
+    ctx.lineTo(dogX + 6, dogY - 8);
+    ctx.fill();
+    // Mũi đen
+    ctx.fillStyle = '#000';
+    ctx.fillRect(dogX - 2, dogY - 4, 3, 2);
+    // Chữ tag Tiệm Vàng
+    ctx.fillStyle = '#fef08a';
+    ctx.font = '8px sans-serif';
+    ctx.fillText("✨ HÓNG BIẾN", 335, 52);
+
+    ctx.restore();
+
+    // ================= NỬA TRÁI: NÉT TOẢN (Màu Hường, Ghế Da, Mở Xuyên Đêm 24/7) =================
     ctx.save();
     ctx.fillStyle = 'rgba(236, 72, 153, 0.05)';
     ctx.fillRect(0, 0, 400, this.height);
     
-    // Biển hiệu tinh gọn bên Toản
+    // Biển hiệu bên Toản
     ctx.fillStyle = '#f472b6';
-    ctx.font = 'bold 13px sans-serif';
-    ctx.fillText("🌸 NÉT TOẢN • ĐIỀU HÒA • GHẾ DA", 20, 30);
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText("🌸 NÉT TOẢN • MỞ XUYÊN ĐÊM 24/7", 15, 30);
+
+    // Biển LED Neon "COMBO ĐÊM 24/7" nhấp nháy
+    const neonAlpha = 0.7 + Math.sin(Date.now() / 250) * 0.3;
+    ctx.fillStyle = `rgba(244, 114, 182, ${neonAlpha})`;
+    ctx.fillRect(15, 46, 125, 20);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.fillText("🌙 COMBO ĐÊM 24/7 ⚡", 20, 60);
 
     // Màn hình máy Toản (Phím cơ, ghế da êm ái)
     for (let i = 0; i < 3; i++) {
@@ -252,7 +379,7 @@ class CharacterRenderer {
       ctx.fillRect(mx + 4, my + 4, 57, 40);
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 8px monospace';
-      ctx.fillText(i === 1 ? "I LOVE U 💍" : "PHÍM CƠ", mx + 8, my + 24);
+      ctx.fillText(i === 1 ? "I LOVE U 💍" : "24/7 RANK", mx + 8, my + 24);
 
       // Ghế da bọc nệm đen/nâu xịn xò
       ctx.fillStyle = '#451a03';
@@ -280,15 +407,38 @@ class CharacterRenderer {
 
     ctx.restore();
 
-    // ================= NỬA PHẢI: NÉT THẦY (CHỦ ĐẠO NÉT CỎ GHẾ NHỰA SONG LONG) =================
+    // ================= NỬA PHẢI: NÉT THẦY (CHỦ ĐẠO NÉT CỎ GHẾ NHỰA & 22H ĐUỔI KHÁCH) =================
     ctx.save();
     ctx.fillStyle = 'rgba(239, 68, 68, 0.05)';
     ctx.fillRect(400, 0, 400, this.height);
 
-    // Biển hiệu CHỦ ĐẠO GHẾ NHỰA bên Thầy
+    // Biển hiệu CHỦ ĐẠO GHẾ NHỰA bên Thầy (Vị trí x: 490, hoàn toàn tách biệt bên phải Tiệm Vàng)
     ctx.fillStyle = '#ef4444';
-    ctx.font = 'bold 13px sans-serif';
-    ctx.fillText("🪑 VUA NÉT CỎ GHẾ NHỰA • THẦY GAMING", 415, 30);
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText("🪑 VUA NÉT CỎ • THẦY GAMING", 490, 30);
+
+    // Đồng hồ / Bảng nội quy 22:00 Đóng Cửa (Vị trí x: 490)
+    ctx.fillStyle = '#7f1d1d';
+    ctx.fillRect(490, 46, 135, 20);
+    ctx.fillStyle = '#fef08a';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.fillText("⏰ 22:00 ĐÓNG CỬA - ĐUỔI VỀ", 495, 60);
+
+    // Cây chổi quét nhà dựng góc tường bên Thầy
+    ctx.strokeStyle = '#d97706';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(775, 100);
+    ctx.lineTo(760, 170);
+    ctx.stroke();
+    // Đầu chổi chà rơm
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath();
+    ctx.moveTo(760, 170);
+    ctx.lineTo(745, 195);
+    ctx.lineTo(770, 195);
+    ctx.closePath();
+    ctx.fill();
 
     // Quạt trần quay cọt kẹt trên trần
     const fanX = 600;
@@ -720,6 +870,38 @@ class CharacterRenderer {
         ctx.beginPath();
         ctx.arc(0, -6, 3, 0, Math.PI * 2);
         ctx.fill();
+      } else if (p.item === 'broom') {
+        // Cây chổi quét nhà 22h đuổi khách
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(-16, -16);
+        ctx.lineTo(8, 8);
+        ctx.stroke();
+        // Đầu chổi
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.moveTo(8, 8);
+        ctx.lineTo(18, 0);
+        ctx.lineTo(16, 18);
+        ctx.closePath();
+        ctx.fill();
+      } else if (p.item === 'noodle') {
+        // Bát mì tôm trứng combo đêm 24/7
+        ctx.fillStyle = '#ea580c';
+        ctx.beginPath();
+        ctx.arc(0, 4, 14, 0, Math.PI);
+        ctx.fill();
+        ctx.fillStyle = '#facc15';
+        ctx.fillRect(-12, 0, 24, 4); // Sợi mì
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(0, -2, 5, 0, Math.PI * 2); // Trứng ốp
+        ctx.fill();
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath();
+        ctx.arc(0, -2, 2.5, 0, Math.PI * 2);
+        ctx.fill();
       } else if (p.item === 'spray') {
         // Chai cồn 90 độ
         ctx.fillStyle = '#38bdf8';
@@ -752,6 +934,132 @@ class CharacterRenderer {
       ctx.fill();
       ctx.restore();
     });
+  }
+
+  // Vẽ các hoạt ảnh Tình Huống Hài Hước Đặc Biệt
+  renderComedyAnimation() {
+    if (!this.comedyAnim || !this.comedyAnim.active) return;
+    const ctx = this.ctx;
+    const anim = this.comedyAnim;
+
+    ctx.save();
+    if (anim.type === 'wife_attack') {
+      // Vợ Toản xuất hiện vác cây lăn bột túm tai Toản
+      const wx = 120;
+      const wy = 320;
+      // Thân Vợ Toản áo hoa tím
+      ctx.fillStyle = '#9333ea';
+      ctx.fillRect(wx - 12, wy - 10, 24, 35);
+      // Đầu & tóc búi củ tỏi
+      ctx.fillStyle = '#fed7aa';
+      ctx.beginPath();
+      ctx.arc(wx, wy - 22, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#451a03';
+      ctx.beginPath();
+      ctx.arc(wx, wy - 26, 12, Math.PI, 0); // Tóc
+      ctx.arc(wx, wy - 36, 7, 0, Math.PI * 2); // Búi tóc
+      ctx.fill();
+      // Cây lăn bột trên tay
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(wx + 10, wy - 30);
+      ctx.lineTo(wx + 35, wy - 45);
+      ctx.stroke();
+
+      // Hiệu ứng túm tai Toản
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(wx + 12, wy - 15);
+      ctx.lineTo(165, 310);
+      ctx.stroke();
+
+      ctx.fillStyle = '#facc15';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillText("👰 TÚM TAI VỀ NẤU CƠM! 💥", 80, 240);
+    } else if (anim.type === 'phone_call') {
+      // Thầy cầm điện thoại mách vợ Toản
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(590, 290, 10, 18);
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText("📞 ALO VỢ TOẢN À?", 530, 275);
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText("📢 TIẾNG VỢ GẦM QUA LOA!", 160, 260);
+    } else if (anim.type === 'dog_attack') {
+      // Chó Corgi chạy sang cắn Toản
+      const dx = anim.x;
+      const dy = anim.y;
+      const hop = Math.abs(Math.sin(Date.now() / 80)) * 6;
+
+      ctx.fillStyle = '#d97706';
+      // Thân chó
+      ctx.fillRect(dx - 14, dy - 10 - hop, 28, 14);
+      // Đầu chó
+      ctx.beginPath();
+      ctx.arc(dx - 16, dy - 8 - hop, 8, 0, Math.PI * 2);
+      ctx.fill();
+      // Tai vểnh
+      ctx.fillStyle = '#b45309';
+      ctx.beginPath();
+      ctx.moveTo(dx - 22, dy - 14 - hop);
+      ctx.lineTo(dx - 18, dy - 20 - hop);
+      ctx.lineTo(dx - 14, dy - 14 - hop);
+      ctx.fill();
+      // Chân chó chạy
+      ctx.fillStyle = '#92400e';
+      ctx.fillRect(dx - 10, dy + 4 - hop, 4, 8);
+      ctx.fillRect(dx + 6, dy + 4 - hop, 4, 8);
+
+      // Bong bóng sủa
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText("GÂU GÂU! 🐕💥", dx - 20, dy - 24 - hop);
+    } else if (anim.type === 'gold_test') {
+      // Cân tiểu ly & vàng sủi bọt
+      ctx.fillStyle = '#facc15';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText("💍 ❌ SHOPEE 29K!", 250, 260);
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillStyle = '#ef4444';
+      ctx.fillText("VÀNG XI MẠ SỦI BỌT ĐEN!", 250, 285);
+    } else if (anim.type === 'water_splash') {
+      // Tạt xô nước ào vào Toản
+      ctx.fillStyle = '#38bdf8';
+      for (let w = 0; w < 12; w++) {
+        const wx = 150 + Math.sin(w + Date.now() / 100) * 40;
+        const wy = 300 + Math.cos(w) * 30;
+        ctx.beginPath();
+        ctx.arc(wx, wy, 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText("💦 TẠT NƯỚC ĐUỔI VỀ!", 140, 270);
+    } else if (anim.type === 'broken_glass') {
+      // Nứt kính tủ vàng
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(400, 45);
+      ctx.lineTo(385, 60);
+      ctx.lineTo(415, 65);
+      ctx.stroke();
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText("💥 NỨT TỦ VÀNG!", 350, 95);
+    } else {
+      // Mặc định
+      ctx.fillStyle = '#facc15';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText("✨ PHÁN XỬ! ✨", 400, 240);
+    }
+    ctx.restore();
   }
 
   // Vẽ chữ số sát thương tự ái nhảy tưng bừng

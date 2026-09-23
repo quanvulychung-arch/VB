@@ -250,6 +250,88 @@ class SoundEngine {
     } catch (e) {}
   }
 
+  // Âm thanh các Tình Huống Hài Hước Đặc Biệt (Tiệm Vàng, Chó sủa, Cân vàng, Còi báo động)
+  playComedySound(type) {
+    if (this.isMuted) return;
+    const ctx = this.ensureContext();
+    const t = ctx.currentTime;
+    try {
+      if (type === "gold_clink") {
+        // Tiếng leng keng kim loại vàng 9999
+        [1200, 1600, 2200].forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const start = t + idx * 0.08;
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, start);
+          gain.gain.setValueAtTime(0.5, start);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + 0.4);
+          osc.connect(gain);
+          gain.connect(this.sfxGain);
+          osc.start(start);
+          osc.stop(start + 0.4);
+        });
+      } else if (type === "dog_bark") {
+        // Tiếng chó sủa "Gâu! Gâu!"
+        [0, 0.18].forEach(offset => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const start = t + offset;
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(360, start);
+          osc.frequency.linearRampToValueAtTime(140, start + 0.12);
+          gain.gain.setValueAtTime(0.6, start);
+          gain.gain.linearRampToValueAtTime(0.01, start + 0.12);
+          osc.connect(gain);
+          gain.connect(this.sfxGain);
+          osc.start(start);
+          osc.stop(start + 0.12);
+        });
+      } else if (type === "alarm_whistle") {
+        // Còi báo động tiệm vàng hú
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(700, t);
+        osc.frequency.linearRampToValueAtTime(1400, t + 0.2);
+        osc.frequency.linearRampToValueAtTime(700, t + 0.4);
+        gain.gain.setValueAtTime(0.45, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.5);
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+        osc.start(t);
+        osc.stop(t + 0.5);
+      } else if (type === "glass_crack") {
+        // Kính vỡ nứt
+        this.playExplosion();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(2400, t);
+        osc.frequency.exponentialRampToValueAtTime(300, t + 0.25);
+        gain.gain.setValueAtTime(0.4, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.25);
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+        osc.start(t);
+        osc.stop(t + 0.25);
+      } else {
+        // Mặc định: tiếng gõ cộp cộp vui nhộn
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "square";
+        osc.frequency.setValueAtTime(440, t);
+        osc.frequency.exponentialRampToValueAtTime(110, t + 0.2);
+        gain.gain.setValueAtTime(0.5, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.2);
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+        osc.start(t);
+        osc.stop(t + 0.2);
+      }
+    } catch (e) {}
+  }
+
   // Tiếng K.O Hoành Tráng + Fanfare Chiến Thắng
   playKOSound() {
     if (this.isMuted) return;
